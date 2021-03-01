@@ -8,6 +8,9 @@ boot: boot.o
 	
 run: boot
 	./boot
+iso: boot
+	cp boot iso/boot
+	grub-mkrescue -o os.iso iso
 
 clean:
 	-rm boot.o

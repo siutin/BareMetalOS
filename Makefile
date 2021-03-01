@@ -1,19 +1,21 @@
 all: run
 
-boot.o: boot.asm
-	nasm -felf32 boot.asm
+build/boot.o: boot.asm
+	nasm -felf32 -o build/boot.o boot.asm
 
-boot: boot.o
-	ld -m elf_i386 --script=linker.ld -n -o boot boot.o
+build/boot: build/boot.o
+	ld -m elf_i386 --script=linker.ld -n -o build/boot build/boot.o
 	
+iso: build/boot
+	mkdir -p build
+	cp -a iso build/
+	cp build/boot build/iso/boot
+	grub-mkrescue -o build/os.iso build/iso
 
-iso: boot
-	cp boot iso/boot
-	grub-mkrescue -o os.iso iso
-
-run: boot iso
-	qemu-system-x86_64 -cdrom os.iso
+run: iso
+	qemu-system-x86_64 -cdrom build/os.iso
 
 clean:
-	-rm boot.o
-	-rm boot
+	-rm build/boot.o
+	-rm build/boot
+	-rm build/os.iso

@@ -7,19 +7,9 @@
       global        _start
       section       .text
 
-%define system_call int 0x80
 
 _start:
-      mov           eax, 4                    ; system call for write
-      mov           ebx, 1                    ; first arg, stdout
-      mov           ecx, message              ; second arg, starting at message
-      mov           edx, messageLen           ; third arg, message length
-      system_call
-
-      mov           eax, 1                    ; system call for exit
-      xor           ebx, ebx                  ; first arg, exit code 0=SUCCESS
-      system_call
-
-section .data
-      message       db "Hello World", 10, 0
-      messageLen    equ $-message
+      mov dword [0xb8000], 0x0e650e48
+      mov dword [0xb8004], 0x0e6c0e6c
+      mov dword [0xb8008], 0x00000e6f
+      hlt

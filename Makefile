@@ -2,7 +2,7 @@ all: run
 
 prepare:
 	mkdir -p build
-	
+
 build/boot.o: prepare boot.asm
 	nasm -felf32 -o build/boot.o boot.asm
 
@@ -13,7 +13,7 @@ build/os: prepare build/boot
 	mkdir -p build/img/boot/
 	cp -a grub build/img/boot/
 	cp build/boot build/img/boot/
-	
+
 build/os.iso: build/os
 	grub-mkrescue -o build/os.iso build/img
 

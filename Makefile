@@ -15,8 +15,11 @@ iso: build/boot
 img: build/boot
 	sudo ./mkimage.sh && sudo chown 1000:1000 kernel.img
 
-run: iso
+run-iso: iso
 	qemu-system-x86_64 -cdrom build/os.iso
+
+run-img: img
+	qemu-system-x86_64 -hda img
 
 clean:
 	-rm build/boot.o

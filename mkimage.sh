@@ -49,9 +49,3 @@ umount build/mnt/p1
 
 # Unmap the image
 kpartx -dv build/os.img
-
-# hack to make everything owned by the original user, since it will currently be
-# owned by root...
-# LOGNAME=`who am i | awk '{print $1}'`
-# LOGGROUP=`groups $LOGNAME | awk '{print $3}'`
-# chown $LOGNAME:$LOGGROUP -R build os.img

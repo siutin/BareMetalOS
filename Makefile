@@ -12,6 +12,9 @@ iso: build/boot
 	cp build/boot build/iso/boot
 	grub-mkrescue -o build/os.iso build/iso
 
+img: build/boot
+	sudo ./mkimage.sh && sudo chown 1000:1000 kernel.img
+
 run: iso
 	qemu-system-x86_64 -cdrom build/os.iso
 

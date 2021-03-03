@@ -12,6 +12,6 @@ SECTIONS {
   }
   .data :
   {
-      *(.data)
+    *(.data)
   }
 }

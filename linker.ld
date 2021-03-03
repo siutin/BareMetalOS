@@ -1,9 +1,8 @@
 ENTRY(_start)
 
 SECTIONS {
-  . = 1M;
-
-  .boot :
+  . = 0x00100000;
+  .boot ALIGN(0x1000) :
   {
       *(.multiboot_header)
   }  

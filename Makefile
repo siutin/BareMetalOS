@@ -7,7 +7,7 @@ build/kernel.o: prepare kernel.asm
 	nasm -felf32 -o build/kernel.o kernel.asm
 
 build/kernel: prepare build/kernel.o
-	ld -m elf_i386 --script=linker.ld -n -o build/kernel build/kernel.o
+	gcc -no-pie -m32 -z max-page-size=0x1000 -lgcc -Wall -Wextra -ffreestanding -fno-builtin -nostdinc -nostdlib -fno-omit-frame-pointer -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -T linker.ld -Wl,-n -o build/kernel build/kernel.o
 
 build/os: prepare build/kernel
 	mkdir -p build/img/boot/

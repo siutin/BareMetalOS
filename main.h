@@ -1,1 +1,1 @@
-void printExample();
+#include "vga.h"

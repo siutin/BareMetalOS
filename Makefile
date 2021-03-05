@@ -6,11 +6,14 @@ prepare:
 build/loader.o: prepare loader.asm
 	nasm -felf32 -o build/loader.o loader.asm
 
-build/main.o: prepare main.c
+build/vga.o: prepare vga.h vga.h
+	gcc -c -no-pie -m32 -z max-page-size=0x1000 -lgcc -Wall -Wextra -ffreestanding -fno-builtin -nostdlib -fno-omit-frame-pointer -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -T linker.ld -Wl,-n -o build/vga.o vga.c
+
+build/main.o: prepare main.c main.h
 	gcc -c -no-pie -m32 -z max-page-size=0x1000 -lgcc -Wall -Wextra -ffreestanding -fno-builtin -nostdlib -fno-omit-frame-pointer -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -T linker.ld -Wl,-n -o build/main.o main.c
 
-build/kernel: prepare build/loader.o build/main.o
-	ld -m elf_i386 -nostdlib --script=linker.ld -n -o build/kernel build/loader.o build/main.o
+build/kernel: prepare build/loader.o build/vga.o build/main.o
+	ld -m elf_i386 -nostdlib --script=linker.ld -n -o build/kernel build/loader.o build/vga.o build/main.o
 
 build/os: prepare build/kernel
 	mkdir -p build/img/boot/

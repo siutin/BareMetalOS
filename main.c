@@ -4,8 +4,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "main.h"
-
 int main() {
   /* Initialize terminal interface */
   terminal_initialize();

@@ -12,6 +12,7 @@
 #define PIC_2_CTRL 0xA0
 #define PIC_1_DATA 0x21
 #define PIC_2_DATA 0xA1
+#include "keyboard_map.h"
 
 void keyboard_handler_int();
 void load_idt(void*);
@@ -82,6 +83,21 @@ void idt_init()
     initialize_pic();
     initialize_idt_pointer();
     load_idt(&idt_ptr);
+}
+
+void keyboard_handler(void)
+{
+    signed char keycode;
+
+    keycode = read_port(0x60);
+    /* Only print characters on keydown event that have
+     * a non-zero mapping */
+    if(keycode >= 0 && keyboard_map[keycode]) {
+        terminal_putchar(keyboard_map[keycode]);
+    }
+
+    /* Send End of Interrupt (EOI) to master PIC */
+    write_port(0x20, 0x20);
 }
 
 int main() {

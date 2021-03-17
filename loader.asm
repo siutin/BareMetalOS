@@ -34,6 +34,14 @@ endloop:
     jmp endloop
 
 ; Macro to build a GDT descriptor entry
+
+;   Name                 Offset(bits)                                         Meaning
+;--------------------------------------------------------------------------------------------------------------------------------------
+;        Base :  16..31, 32..39, 56..63  (32 bits)     Descriptor Base Address (Lower 4 Bytes, Middle 2 Bytes and Upper 2 Bytes)
+;       Limit :  0..15, 48..51           (20 bits)     Descriptor Limit (Lower 4 Bytes, Upper 4 Bytes)
+; Access Byte :  40..47                  (8 bits)      8 flags defining memory access privileges
+;        Flag :  52..55                  (4 bits)      4 flags influencing segment size
+
 %define MAKE_GDT_DESC(base, limit, access, flags) \
     (((base & 0x00FFFFFF) << 16) | \
     ((base & 0xFF000000) << 32) | \

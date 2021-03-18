@@ -1,10 +1,12 @@
 // modify based on:
 // https://wiki.osdev.org/Bare_Bones
 // https://stackoverflow.com/questions/37618111/keyboard-irq-within-an-x86-kernel/37635449#37635449
+// https://www.gnu.org/software/grub/manual/multiboot2/multiboot.html#multiboot2_002eh
 
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include "multiboot2.h"
 #include "port_io.h"
 
 #define IDT_SIZE 256
@@ -100,9 +102,40 @@ void keyboard_handler(void)
     write_port(0x20, 0x20);
 }
 
-int main() {
+char* itoa(unsigned int i, char b[]){
+    char const digit[] = "0123456789";
+    char* p = b;
+    if(i<0){
+        *p++ = '-';
+        i *= -1;
+    }
+    int shifter = i;
+    do{ //Move to where representation ends
+        ++p;
+        shifter = shifter/10;
+    }while(shifter);
+    *p = '\0';
+    do{ //Move back, inserting digits as u go
+        *--p = digit[i%10];
+        i = i/10;
+    }while(i);
+    return b;
+}
+
+int main( unsigned int magic, unsigned long addr) {
+
   /* Initialize terminal interface */
   terminal_initialize();
+  terminal_writestring("BareMetal OS\n");
+
+  char str0[80];
+
+  terminal_writestring("magic=");
+  terminal_writestring(itoa(magic, str0));
+  terminal_writestring("\n");
+
+
+  terminal_writestring("\n");
 
   terminal_writestring("initialize IDT ...\n");
   idt_init();

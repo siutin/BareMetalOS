@@ -134,7 +134,16 @@ int main( unsigned int magic, unsigned long addr) {
   terminal_writestring(itoa(magic, str0));
   terminal_writestring("\n");
 
+  if (addr & 7) {
+    terminal_writestring("Unaligned mbi=0x");
+    terminal_writehex(addr);
+    terminal_writestring("\n");
+    return;
+  }
 
+  unsigned size = *(unsigned *) addr;
+  terminal_writestring("mbi size=0x");
+  terminal_writehex(size);
   terminal_writestring("\n");
 
   terminal_writestring("initialize IDT ...\n");

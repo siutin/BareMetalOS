@@ -379,12 +379,15 @@ int main( unsigned int magic, unsigned long addr) {
   printf("Total mbi size 0x%x\n", (unsigned) tag - addr);
 
 
-  printf("initialize IDT ...\n");
+  terminal_setpos(0,0);
+  printf("BareMetal OS -> [1] Init IDT");
   idt_init();
   load_idt_entry(0x21, (unsigned long) keyboard_handler_int, 0x08, 0x8e);
-  printf("initialize keyboard ...\n");
+  terminal_setpos(0,0);
+  printf("BareMetal OS -> [2] Init Keyboard");
   kb_init();
-  printf("system ready ...\n");
+  terminal_setpos(0,0);
+  printf("BareMetal OS -> [3] System Ready -> ");
   while(1) __asm__("hlt\n\t");
   return 0;
 }

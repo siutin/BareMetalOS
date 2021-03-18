@@ -34,9 +34,3 @@ gdtr:
 
 CODE32_SEL equ gdt32_code - gdt_start
 DATA32_SEL equ gdt32_data - gdt_start
-
-section .bss
-align 4
-stack:
-  resb STACKSIZE
-stack_ptr:

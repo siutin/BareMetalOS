@@ -33,3 +33,9 @@ _start:
 endloop:
     hlt                         ; halt the CPU
     jmp endloop
+
+section .bss
+align 4
+stack:
+  resb STACKSIZE
+stack_ptr:

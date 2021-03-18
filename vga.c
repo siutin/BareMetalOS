@@ -14,6 +14,10 @@ extern void terminal_initialize(void)
   }
 }
 
+extern void terminal_setpos(size_t x, size_t y) {
+  terminal_row = y;
+  terminal_column = x;
+}
 void terminal_setcolor(uint8_t color)
 {
   terminal_color = color;

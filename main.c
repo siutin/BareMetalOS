@@ -4,6 +4,7 @@
 // https://www.gnu.org/software/grub/manual/multiboot2/multiboot.html#multiboot2_002eh
 
 #include "main.h"
+#include "keyboard_map.h"
 
 void keyboard_handler(void)
 {

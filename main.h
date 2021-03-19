@@ -4,7 +4,6 @@
 #include "multiboot2.h"
 #include "vga.h"
 #include "pic.h"
-#include "keyboard_map.h"
 
 void keyboard_handler_int();
 

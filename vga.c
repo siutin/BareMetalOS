@@ -1,4 +1,15 @@
+#include "vga_global.h"
 #include "vga.h"
+
+uint8_t vga_entry_color(enum vga_color fg, enum vga_color bg)
+{
+  return fg | bg << 4;
+}
+
+uint16_t vga_entry(unsigned char uc, uint8_t color)
+{
+  return (uint16_t) uc | (uint16_t) color << 8;
+}
 
 extern void terminal_initialize(void)
 {
@@ -18,6 +29,7 @@ extern void terminal_setpos(size_t x, size_t y) {
   terminal_row = y;
   terminal_column = x;
 }
+
 void terminal_setcolor(uint8_t color)
 {
   terminal_color = color;
@@ -29,7 +41,7 @@ void terminal_putentryat(char c, uint8_t color, size_t x, size_t y)
   terminal_buffer[index] = vga_entry(c, color);
 }
 
-void terminal_putchar(char c)
+extern void terminal_putchar(char c)
 {
   if (c == '\n' || c == '\r') {
     terminal_column = 0;

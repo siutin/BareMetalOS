@@ -7,6 +7,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "multiboot2.h"
+#include "vga.h"
 #include "port_io.h"
 
 #define IDT_SIZE 256
@@ -222,7 +223,7 @@ int main( unsigned int magic, unsigned long addr) {
 
   if (addr & 7) {
     printf("Unaligned mbi=0x%x\n", addr);
-    return;
+    return -1;
   }
   
   unsigned size = *(unsigned *) addr;

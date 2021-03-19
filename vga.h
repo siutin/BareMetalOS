@@ -2,7 +2,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include "string.h"
 
 /* Hardware text mode color constants. */
 enum vga_color {
@@ -23,24 +22,6 @@ enum vga_color {
   VGA_COLOR_LIGHT_BROWN = 14,
   VGA_COLOR_WHITE = 15,
 };
-
-const size_t VGA_WIDTH = 80;
-const size_t VGA_HEIGHT = 25;
-
-size_t terminal_row;
-size_t terminal_column;
-uint8_t terminal_color;
-uint16_t* terminal_buffer;
-
-uint8_t vga_entry_color(enum vga_color fg, enum vga_color bg)
-{
-  return fg | bg << 4;
-}
-
-uint16_t vga_entry(unsigned char uc, uint8_t color)
-{
-  return (uint16_t) uc | (uint16_t) color << 8;
-}
 
 extern void terminal_initialize(void);
 extern void terminal_setpos(size_t x, size_t y);

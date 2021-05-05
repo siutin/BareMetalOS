@@ -36,7 +36,7 @@ run-iso: build/os.iso
 	qemu-system-x86_64 -cdrom build/os.iso
 
 run-img: build/os.img
-	qemu-system-x86_64 -hda build/os.img
+	qemu-system-x86_64 -m 4G -hda build/os.img
 
 clean:
 	-rm build/kernel.o

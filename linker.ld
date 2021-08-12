@@ -10,7 +10,8 @@ SECTIONS {
   {
     *(.text)
   }
-  .data :
+  . = 0x0000000;
+  .data ALIGN(0x1000) :
   {
     *(.data)
   }

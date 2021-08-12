@@ -10,9 +10,10 @@ extern main
 %include "boot.asm"
 %include "gdt.asm"
 
-%define GET_P4_OFFSET(vaddr) (((vaddr) >> 39 ) & 0x1FF)
-%define GET_P3_OFFSET(vaddr) (((vaddr) >> 30 ) & 0x1FF)
-%define GET_P2_OFFSET(vaddr) (((vaddr) >> 21 ) & 0x1FF)
+%define GET_PADDR(x) ((x) - BASE_START)
+%define GET_PML4(vaddr) (((vaddr) >> 39 ) & 0x1FF)
+%define GET_PDPT(vaddr) (((vaddr) >> 30 ) & 0x1FF)
+%define GET_PDE(vaddr) (((vaddr) >> 21 ) & 0x1FF)
 
 PMAP_START equ 0xFFFF900000000000
 PMAP_END   equ 0xFFFF940000000000
@@ -42,26 +43,26 @@ _start:
       call disable_paging
 
       ; map P4 entry to P3. set Read/Write Flag and Present Flag
-      mov dword [p4_table + GET_P4_OFFSET(0) * 8], p3_table + 11b
+      mov dword [GET_PADDR(pml4e) + GET_PML4(0) * 8], GET_PADDR(pdpt) + 11b
 
       ; map 4KiB entries. set Global Flag, Read/Write Flag and Present Flag
-      mov dword [p3_table + GET_P3_OFFSET(0) * 8], 10000011b
-      mov dword [p3_table + GET_P3_OFFSET(0) * 8 + 8], 1*1024*1024*1024 + 10000011b
-      mov dword [p3_table + GET_P3_OFFSET(0) * 8 + 16], 2*1024*1024*1024 + 10000011b
-      mov dword [p3_table + GET_P3_OFFSET(0) * 8 + 24], 3*1024*1024*1024 + 10000011b
+      mov dword [GET_PADDR(pdpt) + GET_PDPT(0) * 8], 10000011b
+      mov dword [GET_PADDR(pdpt) + GET_PDPT(0) * 8 + 8], 1*1024*1024*1024 + 10000011b
+      mov dword [GET_PADDR(pdpt) + GET_PDPT(0) * 8 + 16], 2*1024*1024*1024 + 10000011b
+      mov dword [GET_PADDR(pdpt) + GET_PDPT(0) * 8 + 24], 3*1024*1024*1024 + 10000011b
 
       ; map first 4G to kernal pmap. set Global Flag, Read/Write Flag and Present Flag
-      mov dword [p4_table + GET_P4_OFFSET(PMAP_START) * 8], p2_table + 11b
+      mov dword [GET_PADDR(pml4e) + GET_PML4(PMAP_START) * 8], GET_PADDR(pde) + 11b
 
-      mov dword [p2_table + GET_P3_OFFSET(PMAP_START) * 8], 10000011b
-      mov dword [p2_table + GET_P3_OFFSET(PMAP_START) * 8 + 8], 1*1024*1024*1024 + 10000011b
-      mov dword [p2_table + GET_P3_OFFSET(PMAP_START) * 8 + 16], 2*1024*1024*1024 + 10000011b
-      mov dword [p2_table + GET_P3_OFFSET(PMAP_START) * 8 + 24], 3*1024*1024*1024 + 10000011b
+      mov dword [GET_PADDR(pde) + GET_PDPT(PMAP_START) * 8], 10000011b
+      mov dword [GET_PADDR(pde) + GET_PDPT(PMAP_START) * 8 + 8], 1*1024*1024*1024 + 10000011b
+      mov dword [GET_PADDR(pde) + GET_PDPT(PMAP_START) * 8 + 16], 2*1024*1024*1024 + 10000011b
+      mov dword [GET_PADDR(pde) + GET_PDPT(PMAP_START) * 8 + 24], 3*1024*1024*1024 + 10000011b
 
       ; map first 1G to kernel base. set Read/Write Flag and Present Flag
-      mov dword [p4_table + GET_P4_OFFSET(BASE_START) * 8], p1_table + 11b
+      mov dword [GET_PADDR(pml4e) + GET_PML4(BASE_START) * 8], GET_PADDR(pte) + 11b
 
-      mov dword [p1_table + GET_P3_OFFSET(BASE_START) * 8], 10000011b
+      mov dword [GET_PADDR(pte) + GET_PDPT(BASE_START) * 8], 10000011b
 
       call enable_paging
 
@@ -94,7 +95,7 @@ disable_paging:
 enable_paging:
 
     ; let cr3 point at page table
-    mov eax, p4_table
+    mov eax, GET_PADDR(pml4e)
     mov cr3, eax
 
     ; enable PAE
@@ -118,17 +119,17 @@ stack_ptr:
 
 section .data
 align 0x1000
-p4_table:
+pml4e:
     times 0x1000 db 0
 
 align 0x1000
-p3_table:
+pdpt:
     times 0x1000 db 0
 
 align 0x1000
-p2_table:
+pde:
     times 0x1000 db 0
 
 align 0x1000
-p1_table:
+pte:
     times 0x1000 db 0

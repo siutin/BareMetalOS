@@ -20,11 +20,11 @@ align 4
 gdt_start:
     dq MAKE_GDT_DESC(0, 0, 0, 0); null descriptor
 gdt64_code:
-    dq MAKE_GDT_DESC(0, 0x00ffffff, 10011010b, 1100b)
-                                ; 32-bit code, 4kb gran, limit 0xffffffff bytes, base=0
+    dq MAKE_GDT_DESC(0, 0x00ffffff, 10011010b, 1110b)
+                                ; 64-bit code, 4kb gran, limit 0xffffffff bytes, base=0
 gdt64_data:
-    dq MAKE_GDT_DESC(0, 0x00ffffff, 10010010b, 1100b)
-                                ; 32-bit data, 4kb gran, limit 0xffffffff bytes, base=0
+    dq MAKE_GDT_DESC(0, 0x00ffffff, 10010010b, 1110b)
+                                ; 64-bit data, 4kb gran, limit 0xffffffff bytes, base=0
 end_of_gdt:
 
 gdtr64:

@@ -15,17 +15,15 @@ extern main
 %define GET_PDPT(vaddr) (((vaddr) >> 30 ) & 0x1FF)
 %define GET_PDE(vaddr) (((vaddr) >> 21 ) & 0x1FF)
 
-PMAP_START equ 0xFFFF900000000000
-PMAP_END   equ 0xFFFF940000000000
-BASE_START equ 0xFFFFFFFF80000000
-BASE_END  equ 0x0000000000000000
+PMAP_START   equ 0xFFFF900000000000
+PMAP_END     equ 0xFFFF940000000000
+BASE_START   equ 0xFFFFFFFF80000000
+BASE_END     equ 0x0000000000000000
+STACKSIZE    equ 0x4000
 
 [bits 32]
-
-      global        _start
-      section       .text
-      STACKSIZE      equ     0x4000
-
+global        _start
+section       .text
 _start:
 
       cli ; Clear Interrupt Flag in EFLAGS Register
@@ -66,23 +64,9 @@ _start:
 
       call enable_paging
 
-      lgdt [gdtr]                 ; Load our own GDT, the GDTR of Grub may be invalid
+      lgdt [gdtr64]                 ; Load our own GDT, the GDTR64 of Grub may be invalid
 
-      jmp CODE32_SEL:.setsrs       ; Set Segment registers to our 32-bit flat code selector
-.setsrs:
-      mov cx, DATA32_SEL           ; Setup the segment registers with our flat data selector
-      mov ds, cx
-      mov es, cx
-      mov fs, cx
-      mov gs, cx
-      mov ss, cx
-
-      ; call with arguments (multiboot magic, multiboot info)
-      call main
-
-endloop:
-    hlt                         ; halt the CPU
-    jmp endloop
+      jmp CODE64_SEL:start64       ; Set Segment registers to our 32-bit flat code selector
 
 disable_paging:
 
@@ -98,18 +82,47 @@ enable_paging:
     mov eax, GET_PADDR(pml4e)
     mov cr3, eax
 
-    ; enable PAE
+    ; Enable extended properties
     mov eax, cr4                 ; Set the A-register to control register 4.
-    or eax, 1 << 5               ; Set the PAE-bit, which is the 6th bit (bit 5).
+    or eax, 0x0000000B0          ; PGE (Bit 7), PAE (Bit 5), and PSE (Bit 4).
     mov cr4, eax                 ; Set control register 4 to the A-register.
 
+    ; Enable long mode and SYSCALL/SYSRET
+    mov ecx, 0xC0000080		; EFER MSR number
+    rdmsr				; Read EFER
+    or eax, 0x00000101 		; LME (Bit 8)
+    wrmsr				; Write EFER
+
     xchg bx, bx
-    ; enable paging, enter compatibility mode
+    ; Enable paging to activate long mode
     mov eax, cr0                                   ; Set the A-register to control register 0.
     or eax, 1 << 31                                ; Set the PG-bit, which is bit 31.
+    or eax, 1 << 16
     mov cr0, eax                                   ; Set control register 0 to the A-register.
 
     ret
+    
+align 16
+
+[BITS 64]
+start64:
+      mov cx, DATA64_SEL           ; Setup the segment registers with our flat data selector
+      mov ds, cx
+      mov es, cx
+      mov fs, cx
+      mov gs, cx
+      mov ss, cx
+      mov esp, stack+STACKSIZE     ; setup stack pointer register
+
+      ; call with arguments (multiboot magic, multiboot info)
+      call main wrt ..plt
+    ;   mov rax, 0x2f592f412f4b2f4f
+    ;   mov qword [0xb8000], rax
+      hlt
+
+endloop:
+    hlt                         ; halt the CPU
+    jmp endloop
 
 section .bss
 align 4

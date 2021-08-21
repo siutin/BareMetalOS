@@ -1,3 +1,5 @@
+[BITS 32]
+
 section .text
 
 extern keyboard_handler

@@ -19,18 +19,18 @@ section .data
 align 4
 gdt_start:
     dq MAKE_GDT_DESC(0, 0, 0, 0); null descriptor
-gdt32_code:
+gdt64_code:
     dq MAKE_GDT_DESC(0, 0x00ffffff, 10011010b, 1100b)
                                 ; 32-bit code, 4kb gran, limit 0xffffffff bytes, base=0
-gdt32_data:
+gdt64_data:
     dq MAKE_GDT_DESC(0, 0x00ffffff, 10010010b, 1100b)
                                 ; 32-bit data, 4kb gran, limit 0xffffffff bytes, base=0
 end_of_gdt:
 
-gdtr:
+gdtr64:
     dw end_of_gdt - gdt_start - 1
                                 ; limit (Size of GDT - 1)
-    dd gdt_start                ; base of GDT
+    dq gdt_start                ; base of GDT
 
-CODE32_SEL equ gdt32_code - gdt_start
-DATA32_SEL equ gdt32_data - gdt_start
+CODE64_SEL equ gdt64_code - gdt_start
+DATA64_SEL equ gdt64_data - gdt_start

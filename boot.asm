@@ -2,6 +2,7 @@ MULTIBOOT2_HEADER_MAGIC             equ 0xe85250d6
 GRUB_MULTIBOOT_ARCHITECTURE_I386    equ 0x0
 
 section .multiboot_header
+align 8
 header_start:
       dd            MULTIBOOT2_HEADER_MAGIC               ; multiboot v2 magic number
       dd            GRUB_MULTIBOOT_ARCHITECTURE_I386      ; architecture 0

@@ -29,14 +29,15 @@ _start:
       cli ; Clear Interrupt Flag in EFLAGS Register
       cld ; CLear Diection Flag in EFLAGS Register
 
+      ; Push Multiboot information structure
+      mov edi, ebx
+
+      ; Push Multiboot magic value
+      mov esi,eax
+
       mov esp, stack+STACKSIZE  ; setup stack pointer register
       mov ebp, esp
 
-      ; Push Multiboot information structure
-      push ebx
-
-      ; Push Multiboot magic value
-      push eax
 
       call disable_paging
 
@@ -66,7 +67,7 @@ _start:
 
       lgdt [gdtr64]                 ; Load our own GDT, the GDTR64 of Grub may be invalid
 
-      jmp CODE64_SEL:start64       ; Set Segment registers to our 32-bit flat code selector
+      jmp CODE64_SEL:start64       ; Set Segment registers to our 64-bit flat code selector
 
 disable_paging:
 
@@ -103,22 +104,22 @@ enable_paging:
     ret
     
 align 16
-
 [BITS 64]
 start64:
-      mov cx, DATA64_SEL           ; Setup the segment registers with our flat data selector
-      mov ds, cx
-      mov es, cx
-      mov fs, cx
-      mov gs, cx
-      mov ss, cx
-      mov esp, stack+STACKSIZE     ; setup stack pointer register
+    mov cx, DATA64_SEL           ; Setup the segment registers with our flat data selector
+    mov ds, cx
+    mov es, cx
+    mov fs, cx
+    mov gs, cx
+    mov ss, cx
+    mov esp, stack+STACKSIZE  ; setup stack pointer register
+    mov ebp, esp
 
-      ; call with arguments (multiboot magic, multiboot info)
-      call main wrt ..plt
+    ; call with arguments (multiboot magic, multiboot info)
+    call main wrt ..plt
     ;   mov rax, 0x2f592f412f4b2f4f
     ;   mov qword [0xb8000], rax
-      hlt
+    hlt
 
 endloop:
     hlt                         ; halt the CPU

@@ -21,7 +21,7 @@ void keyboard_handler(void)
     write_port(0x20, 0x20);
 }
 
-int main( unsigned int magic, unsigned long addr) {
+int main( unsigned int addr, unsigned long magic) {
 
   /* Initialize terminal interface */
   terminal_initialize();

@@ -15,11 +15,14 @@ build/vga.o: prepare vga.h vga.h
 build/keyb.o: prepare keyb.c
 	gcc -c -no-pie -m64 -z max-page-size=0x1000 -lgcc -Wall -Wextra -ffreestanding -fno-builtin -nostdlib -fno-omit-frame-pointer -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -T linker.ld -Wl,-n -o build/keyb.o keyb.c
 
+build/printf.o: prepare printf.c printf.h
+	gcc -c -no-pie -m64 -z max-page-size=0x1000 -lgcc -Wall -Wextra -ffreestanding -fno-builtin -nostdlib -fno-omit-frame-pointer -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -T linker.ld -Wl,-n -o build/printf.o printf.c
+
 build/main.o: prepare main.c main.h
 	gcc -c -no-pie -m64 -z max-page-size=0x1000 -lgcc -Wall -Wextra -ffreestanding -fno-builtin -nostdlib -fno-omit-frame-pointer -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -T linker.ld -Wl,-n -o build/main.o main.c
 
-build/kernel: prepare build/loader.o build/lowlevel.o build/vga.o build/keyb.o build/main.o
-	ld -m elf_x86_64 -nostdlib --script=linker.ld -n -o build/kernel build/loader.o build/lowlevel.o build/vga.o build/keyb.o build/main.o
+build/kernel: prepare build/loader.o build/lowlevel.o build/vga.o build/keyb.o build/printf.o build/main.o
+	ld -m elf_x86_64 -nostdlib --script=linker.ld -n -o build/kernel build/loader.o build/lowlevel.o build/vga.o build/keyb.o build/printf.o build/main.o
 
 build/os: prepare build/kernel
 	mkdir -p build/img/boot/

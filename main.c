@@ -25,29 +25,15 @@ int main( unsigned int addr, unsigned long magic) {
 
   /* Initialize terminal interface */
   terminal_initialize();
-  printf("BareMetal OS\n");
+  printf("BareMetal OS %s %s\n", "Hello", "World");
 
-  printf("magic=0x%x\n", magic);
+  printf("magic=0x%p\n", magic);
 
   if (addr & 7) {
-    printf("Unaligned mbi=0x%x\n", addr);
+    printf("Unaligned mbi=0x%p\n", addr);
     return -1;
   }
   
-  unsigned size = *(unsigned *) addr;
-  printf("Announced mbi size=0x%x\n", size);
-  
-  print_multiboot_struct(addr);
-
-  terminal_setpos(0,0);
-  printf("BareMetal OS -> [1] Init IDT");
-  idt_init();
-  load_idt_entry(0x21, (unsigned long) keyboard_handler_int, 0x08, 0x8e);
-  terminal_setpos(0,0);
-  printf("BareMetal OS -> [2] Init Keyboard");
-  kb_init();
-  terminal_setpos(0,0);
-  printf("BareMetal OS -> [3] System Ready -> ");
   while(1) __asm__("hlt\n\t");
   return 0;
 }

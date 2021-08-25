@@ -8,6 +8,11 @@
 
 void keyboard_handler_int();
 
+void com1_puts(char* s) {
+    do {
+        com1_putc(*(s++));
+    } while (*s);
+}
 
 void print_multiboot_struct(unsigned int addr) {
   struct multiboot_tag *tag;

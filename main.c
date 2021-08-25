@@ -26,6 +26,8 @@ int main( unsigned int addr, unsigned long magic) {
   /* Initialize terminal interface */
   terminal_initialize();
   printf("BareMetal OS %s %s\n", "Hello", "World");
+  
+  com1_puts("BareMetal OS\n");
 
   printf("magic=0x%p\n", magic);
 

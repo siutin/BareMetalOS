@@ -19,7 +19,7 @@ PMAP_START   equ 0xFFFF900000000000
 PMAP_END     equ 0xFFFF940000000000
 BASE_START   equ 0xFFFFFFFF80000000
 BASE_END     equ 0x0000000000000000
-STACKSIZE    equ 0x4000
+STACKSIZE    equ 0x1000
 
 [bits 32]
 global        _start
@@ -98,11 +98,13 @@ enable_paging:
     ; Enable paging to activate long mode
     mov eax, cr0                                   ; Set the A-register to control register 0.
     or eax, 1 << 31                                ; Set the PG-bit, which is bit 31.
-    or eax, 1 << 16
+    or eax, 1
+    ; or eax, 1 << 16
     mov cr0, eax                                   ; Set control register 0 to the A-register.
 
     ret
     
+section .text
 align 16
 [BITS 64]
 start64:
@@ -125,11 +127,6 @@ endloop:
     hlt                         ; halt the CPU
     jmp endloop
 
-section .bss
-align 4
-stack:
-  resb STACKSIZE
-stack_ptr:
 
 section .data
 align 0x1000
@@ -147,3 +144,9 @@ pde:
 align 0x1000
 pte:
     times 0x1000 db 0
+
+section .bss
+align 0x1000
+stack:
+  resb STACKSIZE
+stack_ptr:

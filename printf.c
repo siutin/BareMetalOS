@@ -7,11 +7,11 @@
 /*  Convert the integer D to a string and save the string in BUF. If
    BASE is equal to ’d’, interpret that D is decimal, and if BASE is
    equal to ’x’, interpret that D is hexadecimal. */
-static void itoa (char *buf, unsigned long base, unsigned long d)
+static void itoa (char *buf, unsigned long base, long long d)
 {
   char *p = buf;
   char *p1, *p2;
-  unsigned long ud = d;
+  long long ud = d;
   int divisor = 10;
 
   /*  If %d is specified and D is minus, put ‘-’ in the head. */
@@ -68,12 +68,12 @@ int is_format_letter(char c) {
     return c == 'c' ||  c == 'd' || c == 'i' ||c == 'e' ||c == 'E' ||c == 'f' ||c == 'g' ||c == 'G' ||c == 'o' ||c == 's' || c == 'u' || c == 'x' || c == 'X' || c == 'p' || c == 'n';
 }
 
-void vsprintf_helper(char * str, void (*putchar)(char), const char * format, uint32_t * pos, va_list arg) {
+void vsprintf_helper(char * str, void (*putchar)(char), const char * format, uint64_t * pos, va_list arg) {
     char c;
     int sign, ival, sys;
     char buf[40];
-    char width_str[10];
-    uint32_t uval;
+    // char width_str[10];
+    uint64_t uval;
     uint32_t size = 8;
     uint32_t i;
     int size_override = 0;
@@ -148,21 +148,21 @@ void vsprintf_helper(char * str, void (*putchar)(char), const char * format, uin
                     break;
                 case 'c':
                     if(str) {
-                        *(str + *pos) = (char)va_arg(arg, int);
+                        *(str + *pos) = (char)va_arg(arg, long);
                         *pos = *pos + 1;
                     }
                     else {
-                        (*putchar)((char)va_arg(arg, int));
+                        (*putchar)((char)va_arg(arg, long));
                     }
                     break;
                 case 's':
                     if(str) {
-                        char * t = (char *) va_arg(arg, int);
+                        char * t = (char *) va_arg(arg, long);
                         strcpy(str + (*pos), t);
                         *pos = *pos + strlen(t);
                     }
                     else {
-                        char * t = (char *) va_arg(arg, int);
+                        char * t = (char *) va_arg(arg, long);
                         while(*t) {
                             putchar(*t);
                             t++;
@@ -191,7 +191,7 @@ void vsprintf_helper(char * str, void (*putchar)(char), const char * format, uin
  * vsprintf should keeps track of current mem pointer to place next character(for printf, print_char alread keeps track of current screen posistion, so this is only true for sprintf)
  * */
 void vsprintf(char * str, void (*putchar)(char), const char * format, va_list arg) {
-    uint32_t pos = 0;
+    uint64_t pos = 0;
     vsprintf_helper(str, putchar, format, &pos, arg);
 }
 

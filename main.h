@@ -6,12 +6,22 @@
 #include "pic.h"
 #include "printf.h"
 
-void keyboard_handler_int();
+extern void keyboard_handler_int();
+extern void general_handler_int(void);
+
+extern void divide_by_zero(void);
 
 void com1_puts(char* s) {
     do {
         com1_putc(*(s++));
     } while (*s);
+}
+
+void com1_printf(const char * s, ...) {
+    va_list ap;
+    va_start(ap, s);
+    vsprintf(NULL, com1_putc, s, ap);
+    va_end(ap);
 }
 
 void print_multiboot_struct(unsigned int addr) {

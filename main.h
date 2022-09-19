@@ -7,7 +7,8 @@
 #include "printf.h"
 
 extern void keyboard_handler_int();
-extern void general_handler_int(void);
+extern void default_exception_handler(void);
+extern void default_interrupt_handler(void);
 
 extern void divide_by_zero(void);
 

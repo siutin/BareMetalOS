@@ -6,10 +6,10 @@
 #include "main.h"
 #include "keyboard_map.h"
 
-void general_handler(void)
-{
-  *((unsigned long*)0xB8000) = 0x2f592f412f4b2f4f;
-}
+// void general_handler(void)
+// {
+//   *((unsigned long*)0xB8000) = 0x2f592f412f4b2f4f;
+// }
 
 // void keyboard_handler(void)
 // {
@@ -29,7 +29,7 @@ void general_handler(void)
 
 void divzero_init(void)
 {
-    unsigned char curmask_master = read_port (0x21);
+    unsigned char curmask_master = read_port(0x21);
     write_port(0x21, curmask_master & 0xFE);
 }
 
@@ -68,15 +68,24 @@ int main( unsigned int addr, unsigned long magic) {
   idt_init();
 
 
-  com1_printf("general_handler address: %p\n", general_handler_int);
-  com1_printf("low: %x\n", ((uint64_t) general_handler_int) & 0xFFFF);
-  com1_printf("mid: %x\n", ((uint64_t) general_handler_int) >> 16);
-  com1_printf("high: %x\n", ((uint64_t) general_handler_int) >> 32);
+  com1_printf("general_handler address: %p\n", default_exception_handler);
+  com1_printf("low: %x\n", ((uint64_t) default_exception_handler) & 0xFFFF);
+  com1_printf("mid: %x\n", ((uint64_t) default_exception_handler) >> 16);
+  com1_printf("high: %x\n", ((uint64_t) default_exception_handler) >> 32);
 
-  load_idt_entry(0, 0x8E, general_handler_int);
+  // load_idt_entry(0, 0x8e00, general_handler_int);
+
+  for (int i = 0; i < 32; ++i) {
+      IdtSetEntry(i, 0x8E, default_exception_handler);
+  }
+
+  for (int i = 32; i < 256; ++i) {
+      IdtSetEntry(i, 0x8F, default_interrupt_handler);
+  }
+  
   divzero_init();
 
-  // load_idt_entry(0x21, 0x8E, keyboard_handler_int);
+  // IdtSetEntry(0x21, 0x8E, keyboard_handler_int);
   // terminal_setpos(0,0);
   // printf("BareMetal OS -> [%d] %s", 2, "Init Keyboard");
   // kb_init();

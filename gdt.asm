@@ -34,3 +34,11 @@ gdtr64:
 
 CODE64_SEL equ gdt64_code - gdt_start
 DATA64_SEL equ gdt64_data - gdt_start
+
+%define idt_base                    0x1000
+; -------------------------------------------------------------------------------------------------
+; IDT Descriptor
+idt:
+.desc:
+        dw 4095                     ; 256 * sizeof(IdtEntry) - 1
+        dq idt_base                 ; 64-bit Base Address

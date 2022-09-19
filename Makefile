@@ -50,7 +50,7 @@ run-img-gdb: build/os.img
   -serial chardev:char0 -mon chardev=char0 -s -S -d int -no-reboot -no-shutdown
 
 fix:
-	sudo dmsetup remove -f loop1p1
+	sudo dmsetup remove -f loop6p1
 
 clean:
 	-rm build/kernel.o
